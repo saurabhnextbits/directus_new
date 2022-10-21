@@ -6076,16 +6076,20 @@ var script = {
         this.task.id = Date.now() + parseInt(Math.random()*100);
         // this.task.userId = this.$auth.user.id;
         this.task.date = String(new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}));
+        this.task.dateNew = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000);
         this.task.dateTime = parseFloat(new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime());
+        this.task.hoursCount = this.timestrToSec(this.task.hours)/3600;
         
         this.api.post(`/items/Timesheet`,
         {
           date : this.task.date,
+          dateNew : this.task.dateNew,
           dateTime : this.task.dateTime,
           department : this.task.department,
           hours : this.task.hours,
           notes : this.task.notes,
           project : this.task.project,
+          hoursCount : this.task.hoursCount,
           status: "published"
         }).then(function (response) {
             // console.log(response);
@@ -6112,8 +6116,9 @@ var script = {
       if(this.formValidate()){
         
         this.task.date = String(new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}));
+        this.task.dateNew = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000);
         this.task.dateTime = parseFloat(new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime());
-
+         this.task.hoursCount = this.timestrToSec(this.task.hours)/3600;
         let that = this;
         
 
@@ -6123,11 +6128,13 @@ var script = {
         this.api.patch(`/items/Timesheet/${this.task.id}`,
     {
       date : this.task.date,
+      dateNew: this.task.dateNew,
       dateTime : this.task.dateTime,
       department : this.task.department,
       hours : this.task.hours,
       notes : this.task.notes,
       project : this.task.project,
+      hoursCount : this.task.hoursCount,
       status: "published",
       userId : this.task.userId
     }).then(function (response) {
@@ -6983,7 +6990,7 @@ var e=[],t=[];function n(n,r){if(n&&"undefined"!=typeof document){var a,s=!0===r
 var css$1 = "\n.v-card[data-v-b52a34f6] {\n  min-width: 100%;\n  max-width: 100%;\n}\n.v-tabs.horizontal[data-v-b52a34f6] {\n    justify-content: space-between;\n    display: flex;\n    flex-direction: row;\n}\n.field.full[data-v-b52a34f6] {\n  padding: 10px 20px;\n}\n.v-text-overflow[data-v-b52a34f6]{\n  padding-bottom: 10px;\n}\n.v-tab.horizontal[data-v-b52a34f6] {\n  flex-direction: column;\n  height: 60px !important;\n  border-bottom: 3px solid transparent !important;\n}\n.v-tab.horizontal.active[data-v-b52a34f6] {\n  border-bottom: 3px solid #5842d0 !important;\n  font-weight: 800;\n}\n.v-card-subtitle[data-v-b52a34f6]{\n  margin-top: 0px;\n  padding-bottom: 0;\n  padding-right: 70px;\n}\n.v-card-actions[data-v-b52a34f6] {\n    align-items: center;\n}\n.calendershow[data-v-b52a34f6] {\n    width: 300px;\n}\n.date-btn[data-v-b52a34f6]{\n  position: absolute;\n  top: 25%;\n  right: 20px;\n}\n.task-date-wrapper[data-v-b52a34f6]{\n  position: relative;\n}\n.v-card[data-v-b52a34f6]:hover {\n    background-color: #f0f4f9;\n}\n@media screen and (max-width:767px) {\n.v-tabs.horizontal[data-v-b52a34f6]{\n    \n    flex-wrap: wrap;\n}\n.v-tab.horizontal[data-v-b52a34f6] {\n    padding: 10px 5px !important;\n    min-height: 50px;\n}\n.v-card-subtitle[data-v-b52a34f6]{\n    padding: 0 5px;\n}\n.v-tabs.horizontal .v-tab[data-v-b52a34f6]:last-child{\n    background: var(--v-button-background-color-disabled);\n    flex-direction: row;\n    gap: 10px;\n    flex: 0 0 100%;\n    max-width: 100%;\n}\n.v-card[data-v-b52a34f6]{\n    display: flex;\n    justify-content: space-between;\n}\n.v-card-actions[data-v-b52a34f6] {\n    padding: 10px;\n}\n.today-btn > button[data-v-b52a34f6] {\n    min-width: min-content !important;\n    padding: 10px !important;\n}\n.actions .action-buttons>*[data-v-b52a34f6]:not(:last-child) {\n    margin-right: 5px;\n}\n.v-item-group.v-tabs-items[data-v-b52a34f6], .v-tabs[data-v-b52a34f6], .v-table[data-v-b52a34f6] {\n    padding: 0;\n}\n}\n@media screen and (min-width:768px) {\n.v-item-group.v-tabs-items[data-v-b52a34f6], .v-tabs[data-v-b52a34f6], .v-table[data-v-b52a34f6] {\n    padding: 0 32px;\n}\n.v-card[data-v-b52a34f6] {\n    display: flex;\n    justify-content: space-between;\n}\n.v-card[data-v-b52a34f6]:first-child{\n    flex: 0 0 80%;\n    max-width: 80%;\n}\n.field.full.close-btn[data-v-b52a34f6]{\n    padding-left: 0;\n}\n.field.full.delete-btn[data-v-b52a34f6]{\n    float: right;\n}\n}\n.filter-field[data-v-b52a34f6]{\n   margin: 10px 20px;\n}\n.filter-field.clear[data-v-b52a34f6]{\n    margin-left: 0;\n}\n\n";
 n(css$1,{});
 
-var css = "\n.v-tab-item .v-list:nth-child(2) {\n    padding-top: 8px;\n}\n.v-drawer .cancel,.header-bar .nav-toggle {\n    display: none;\n}\n.v-tab.horizontal.active strong{\n  font-weight: 800;\n}\n.v-info[data-v-130d5c84] {\n    flex-direction: revert;\n    padding: 10px 25px;\n    gap: 20px;\n}\n.icon[data-v-130d5c84] {\n    width: 20px;\n    height: 20px;\n    margin-top: 5px;\n}\n.title[data-v-130d5c84]{\n    font-size: 15px;\n    font-weight: 600;\n}\n.content[data-v-130d5c84]{\n  text-align: left;\n}\n.v-list-item {\n    padding: 0 !important;\n}\n@media screen and (max-width:767px) {\n.today-btn > button {\n    min-width: min-content !important;\n    padding: 10px !important;\n}\n.field.full ,.field.full button{\n  width: 100%;\n}\n#dialog-outlet .container.right .v-drawer{\n    max-width: 85vw;\n}\n.header-bar .title-container[data-v-757091cf]{\n    margin-left: 0;\n}\n}\n.filter-field .v-input.full-width, filter-field .v-input.full-width .input , .filter-field.v-input.full-width, filter-field.v-input.full-width .input {\n    width: calc(100% - 40px);\n    margin: 10px 20px;\n}\n.filter-field.v-button {\n    margin: 0 20px 10px;\n    width: calc(50% - 30px ) !important;\n}\n.filter-field.v-button button {\n    min-width: 100%;\n}\n";
+var css = "\n.v-tab-item .v-list:nth-child(2) {\n    padding-top: 8px;\n}\n.v-drawer .cancel,.header-bar .nav-toggle {\n    display: none;\n}\n.v-tab.horizontal.active strong{\n  font-weight: 800;\n}\n.v-info[data-v-130d5c84] {\n    flex-direction: revert;\n    padding: 10px 25px;\n    gap: 20px;\n}\n.icon[data-v-130d5c84] {\n    width: 20px;\n    height: 20px;\n    margin-top: 5px;\n}\n.title[data-v-130d5c84]{\n    font-size: 15px;\n    font-weight: 600;\n}\n.content[data-v-130d5c84]{\n  text-align: left;\n}\n.v-list-item {\n    padding: 0 !important;\n}\n@media screen and (max-width:767px) {\n.today-btn > button {\n    min-width: min-content !important;\n    padding: 10px !important;\n}\n.field.full ,.field.full button{\n  width: 100%;\n}\n#dialog-outlet .container.right .v-drawer{\n    max-width: 85vw;\n}\n.header-bar .title-container[data-v-757091cf]{\n    margin-left: 0;\n}\n}\n.filter-field .v-input.full-width, filter-field .v-input.full-width .input , .filter-field.v-input.full-width, filter-field.v-input.full-width .input {\n    width: calc(100% - 40px);\n    margin: 10px 20px;\n}\n.filter-field.v-button {\n    margin: 0 20px 10px;\n    width: calc(50% - 30px ) !important;\n}\n.filter-field.v-button button {\n    min-width: 100%;\n}\ntable[data-v-20f02ea8] tr {\n    --grid-columns: 80px 160px 160px 160px 160px 160px 1fr;\n}\n";
 n(css,{});
 
 script.render = render;
