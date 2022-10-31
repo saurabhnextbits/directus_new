@@ -5728,10 +5728,10 @@ var script = {
       id: Date.now() + parseInt(Math.random()*100),
       userId:'',
       date: new Date(),
-      dateTime: new Date().getTime(),
+      timestamp: new Date().getTime(),
       project:'',
       department:'',
-      hours:'',
+      time:'',
       notes:'',
       status:'published'
     },
@@ -5873,15 +5873,15 @@ var script = {
       for(let i=0;i< this.tabContentItems.length; i++){
         // console.log(this.tabContentItems[i]);
         if(this.tabContentItems[i].day == tabitem.tab || tabitem.tab == 'Total'){
-          tabitem.hours = this.formatTime(this.timestrToSec(tabitem.hours) + this.timestrToSec(this.tabContentItems[i].hours));
+          tabitem.time = this.formatTime(this.timestrToSec(tabitem.time) + this.timestrToSec(this.tabContentItems[i].time));
         }
       }
-      this.tabItems[tabitem.id].hours = tabitem.hours;
-      return tabitem.hours
+      this.tabItems[tabitem.id].time = tabitem.time;
+      return tabitem.time
     
     },
     getTimesheet(){
-      let url = `/items/Timesheet`;
+      let url = `/items/nextbits_timesheet`;
       if(this.filterContent !== ''){
         url += `?filter={"_and":[{"${this.filter}":{"${this.compare}":"${this.filterContent}"}}]}`;
       }
@@ -5891,7 +5891,7 @@ var script = {
           try {
               for (const doc of res.data.data) {
                 // console.log(doc);
-                doc.hoursString = this.timeIntegerToStringConvert(doc.hours);
+                doc.hoursString = this.timeIntegerToStringConvert(doc.time);
                 this.timesheetTable.push(doc);
               }
               
@@ -5935,7 +5935,7 @@ var script = {
       // console.log(currDate);
       this.end = parseFloat(new Date((currDate.getTime()) + currDate.getTimezoneOffset() * 60000).getTime());
       // console.log(this.start,this.end);
-			this.api.get(`/items/Timesheet?filter={"_and":[{"dateTime":{"_lte":"${this.end}"}},{"dateTime":{"_gte":"${this.start}"}}]}`).then((res) => {
+			this.api.get(`/items/nextbits_timesheet?filter={"_and":[{"timestamp":{"_lte":"${this.end}"}},{"timestamp":{"_gte":"${this.start}"}}]}`).then((res) => {
 				this.collections = res.data.data;
 				
         if(res.data.data.length > 0) {
@@ -5970,7 +5970,7 @@ var script = {
         id:"w7"+Math.floor(Math.random() * 1000),
         tab:"Total",
         tasks:[],
-        hours:0
+        time:0
         };
       
       let tabDate = new Date(this.start);
@@ -5995,15 +5995,15 @@ var script = {
         item.date= new Date(day);
         // console.log(i,"-----",item.date)
         item.tasks = [];
-        item.hours = 0;
+        item.time = 0;
         for(let j=0;j<this.tabContentItems.length;j++){
           // console.log(this.tabContentItems[j].date == day);
           if(new Date(this.tabContentItems[j].date).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}) == day){
             item.tasks.push(this.tabContentItems[j]);
-            item.hours = item.hours + this.tabContentItems[j].hours;
+            item.time = item.time + this.tabContentItems[j].time;
             totalItem.tasks.push(this.tabContentItems[j]);
-            totalItem.hours = totalItem.hours + this.tabContentItems[j].hours;
-            // console.log(totalItem.hours);
+            totalItem.time = totalItem.time + this.tabContentItems[j].time;
+            // console.log(totalItem.time);
           }
         }
         // console.log(item);
@@ -6039,10 +6039,10 @@ var script = {
       this.date = new Date((new Date(this.dateUnformated).getTime()) - (new Date(this.dateUnformated).getTimezoneOffset()) * 60000).toISOString().substr(0, 10);
       this.task.id='';
       this.task.date = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"});
-      this.task.dateTime = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime();
+      this.task.timestamp = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime();
       this.task.project='';
       this.task.department='';
-      this.task.hours='';
+      this.task.time='';
       this.task.notes='';
     
       // console.log(this.task);
@@ -6057,7 +6057,7 @@ var script = {
       if(this.task.department == ''){
         this.error = this.error + 'Department is required <br>';
       }
-      if(this.task.hours == '' || this.task.hours == null ){
+      if(this.task.time == '' || this.task.time == null ){
         this.error = this.error + 'Hours is required <br>';
       }
       if(this.error != ''){
@@ -6077,15 +6077,15 @@ var script = {
         this.task.id = Date.now() + parseInt(Math.random()*100);
         // this.task.userId = this.$auth.user.id;
         this.task.date = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000);
-        this.task.dateTime = parseFloat(new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime());
+        this.task.timestamp = parseFloat(new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime());
         
         
-        this.api.post(`/items/Timesheet`,
+        this.api.post(`/items/nextbits_timesheet`,
         {
           date : this.task.date,
-          dateTime : this.task.dateTime,
+          timestamp : this.task.timestamp,
           department : this.task.department,
-          hours : this.task.hours,
+          time : this.task.time,
           notes : this.task.notes,
           project : this.task.project,
           status: "published"
@@ -6113,19 +6113,19 @@ var script = {
     async updateTask(id){
       if(this.formValidate()){
         this.task.date = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000);
-        this.task.dateTime = parseFloat(new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime());
+        this.task.timestamp = parseFloat(new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime());
         let that = this;
         
 
         
         // console.log(this.task);
 
-        this.api.patch(`/items/Timesheet/${this.task.id}`,
+        this.api.patch(`/items/nextbits_timesheet/${this.task.id}`,
     {
       date : this.task.date,
-      dateTime : this.task.dateTime,
+      timestamp : this.task.timestamp,
       department : this.task.department,
-      hours : this.task.hours,
+      time : this.task.time,
       notes : this.task.notes,
       project : this.task.project,
       status: "published",
@@ -6146,7 +6146,7 @@ var script = {
     async deleteTask(){
       this.deleteId;
       let that = this;
-      this.api.delete(`/items/Timesheet/${this.task.id}`).then(function (response) {
+      this.api.delete(`/items/nextbits_timesheet/${this.task.id}`).then(function (response) {
         // console.log(response);
         that.dateUnformated = new Date((new Date(that.date).getTime()) + (new Date(that.date).getTimezoneOffset()) * 60000);
         that.dialogDelete = false;
@@ -6168,15 +6168,15 @@ var script = {
 
       
 
-      this.api.get(`/items/project`)
+      this.api.get(`/items/nextbits_project`)
       .then(function (res) {
         that.projects = [];
         if(res.data.data.length > 0) {
           try {
             for (const doc of res.data.data) {
               let x = {
-                        text: doc.pcode +' - '+ doc.pname,
-                        value: doc.pcode +' - '+ doc.pname,
+                        text: doc.code +' - '+ doc.name,
+                        value: doc.code +' - '+ doc.name,
                       };
               
               that.projects.push(x);
@@ -6192,15 +6192,15 @@ var script = {
     },
     departmentList() {
       let that = this;
-      this.api.get(`/items/department`)
+      this.api.get(`/items/nextbits_department`)
       .then(function (res) {
         that.departments = [];
         if(res.data.data.length > 0) {
           try {
             for (const doc of res.data.data) {
               let x = {
-                        text: doc.dname,
-                        value: doc.dname,
+                        text: doc.name,
+                        value: doc.name,
                       };
               
               that.departments.push(x);
@@ -6224,7 +6224,7 @@ var script = {
       this.dialogDelete = false;
     },
     timeConvert(){ 
-      let number = this.task.hours;
+      let number = this.task.time;
       // console.log(number);
       if(number == '' || number == null){
         this.error = "Hours is Required ";
@@ -6232,7 +6232,7 @@ var script = {
       else {
       if(number.includes(':')){
         // console.log(number);
-       this.task.hours = this.timestrToSec(this.task.hours)/3600;
+       this.task.time = this.timestrToSec(this.task.time)/3600;
 
       }
       
@@ -6543,8 +6543,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 value: 'department'
               },
               {
-                text: 'Hours',
-                value: 'hours'
+                text: 'Time',
+                value: 'time'
               }
             ]
                 }, null, 8 /* PROPS */, ["modelValue"]),
@@ -6646,7 +6646,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                   }, {
                     default: withCtx(() => [
                       createElementVNode("strong", null, toDisplayString($data.isMobile && item.tab != 'Total' ?item.tab.substring(0, 1):item.tab), 1 /* TEXT */),
-                      createElementVNode("span", _hoisted_6, toDisplayString($options.timeIntegerToStringConvert(item.hours)), 1 /* TEXT */)
+                      createElementVNode("span", _hoisted_6, toDisplayString($options.timeIntegerToStringConvert(item.time)), 1 /* TEXT */)
                     ]),
                     _: 2 /* DYNAMIC */
                   }, 1032 /* PROPS, DYNAMIC_SLOTS */, ["style"]))
@@ -6727,7 +6727,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                                           default: withCtx(() => [
                                             createVNode(_component_v_card_subtitle, { style: {"margin-top":"0"} }, {
                                               default: withCtx(() => [
-                                                createTextVNode(toDisplayString($options.timeIntegerToStringConvert(item.hours)), 1 /* TEXT */)
+                                                createTextVNode(toDisplayString($options.timeIntegerToStringConvert(item.time)), 1 /* TEXT */)
                                               ]),
                                               _: 2 /* DYNAMIC */
                                             }, 1024 /* DYNAMIC_SLOTS */),
@@ -6785,7 +6785,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 						value: 'department'
 					},
 					{
-						text: 'Hours',
+						text: 'Time',
 						value: 'hoursString'
 					},
           {
@@ -6846,8 +6846,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 label: "Time",
                 placeholder: "0",
                 filled: "",
-                modelValue: $data.task.hours,
-                "onUpdate:modelValue": _cache[10] || (_cache[10] = $event => (($data.task.hours) = $event)),
+                modelValue: $data.task.time,
+                "onUpdate:modelValue": _cache[10] || (_cache[10] = $event => (($data.task.time) = $event)),
                 onFocusout: _cache[11] || (_cache[11] = $event => ($options.timeConvert())),
                 id: "taskTime"
               }, null, 8 /* PROPS */, ["modelValue"])
