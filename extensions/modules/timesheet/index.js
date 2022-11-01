@@ -5728,7 +5728,6 @@ var script = {
       id: Date.now() + parseInt(Math.random()*100),
       userId:'',
       date: new Date(),
-      timestamp: new Date().getTime(),
       project:'',
       department:'',
       time:'',
@@ -5918,6 +5917,8 @@ var script = {
       let currDate = new Date(this.dateUnformated);
       // console.log(currDate.getTime(),moment(currDate).weekday(0).get('date'));
       let startDate = moment(currDate).weekday(0);
+      let startDateFormat = moment(startDate).format().substr(0, 10);
+      let endDateFormat = moment(startDate).add(6, 'days').format().substr(0, 10);
       currDate.setDate(startDate.get('date'));
       currDate.setMonth(startDate.get('month'));
       currDate.setFullYear(startDate.get('year'));
@@ -5927,6 +5928,7 @@ var script = {
       currDate.setMinutes("00");
       currDate.setSeconds("00");
       this.start = parseFloat(new Date((currDate.getTime()) + currDate.getTimezoneOffset() * 60000).getTime());
+      // let startDate = new Date((currDate.getTime()) + currDate.getTimezoneOffset() * 60000).toISOString().substr(0, 10);
       // console.log(currDate);
       currDate.setHours("23");
       currDate.setMinutes("59");
@@ -5934,8 +5936,9 @@ var script = {
       currDate.setDate(currDate.getDate() +6);
       // console.log(currDate);
       this.end = parseFloat(new Date((currDate.getTime()) + currDate.getTimezoneOffset() * 60000).getTime());
+      // let endDate = new Date((currDate.getTime()) + currDate.getTimezoneOffset() * 60000).toISOString().substr(0, 10);
       // console.log(this.start,this.end);
-			this.api.get(`/items/nextbits_timesheet?filter={"_and":[{"timestamp":{"_lte":"${this.end}"}},{"timestamp":{"_gte":"${this.start}"}}]}`).then((res) => {
+			this.api.get(`/items/nextbits_timesheet?filter={"date": {"_between": ["${startDateFormat}", "${endDateFormat}"]}}`).then((res) => {
 				this.collections = res.data.data;
 				
         if(res.data.data.length > 0) {
@@ -6039,7 +6042,6 @@ var script = {
       this.date = new Date((new Date(this.dateUnformated).getTime()) - (new Date(this.dateUnformated).getTimezoneOffset()) * 60000).toISOString().substr(0, 10);
       this.task.id='';
       this.task.date = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"});
-      this.task.timestamp = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime();
       this.task.project='';
       this.task.department='';
       this.task.time='';
@@ -6077,13 +6079,10 @@ var script = {
         this.task.id = Date.now() + parseInt(Math.random()*100);
         // this.task.userId = this.$auth.user.id;
         this.task.date = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000);
-        this.task.timestamp = parseFloat(new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime());
-        
-        
+                
         this.api.post(`/items/nextbits_timesheet`,
         {
           date : this.task.date,
-          timestamp : this.task.timestamp,
           department : this.task.department,
           time : this.task.time,
           notes : this.task.notes,
@@ -6113,7 +6112,6 @@ var script = {
     async updateTask(id){
       if(this.formValidate()){
         this.task.date = new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000);
-        this.task.timestamp = parseFloat(new Date((new Date(this.date).getTime()) + (new Date(this.date).getTimezoneOffset()) * 60000).getTime());
         let that = this;
         
 
@@ -6123,7 +6121,6 @@ var script = {
         this.api.patch(`/items/nextbits_timesheet/${this.task.id}`,
     {
       date : this.task.date,
-      timestamp : this.task.timestamp,
       department : this.task.department,
       time : this.task.time,
       notes : this.task.notes,
